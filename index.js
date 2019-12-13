@@ -3,8 +3,9 @@ const app = express();
 const port = 4000;
 const bodyParser = require("body-parser");
 const Sse = require("json-sse");
-const routerMessage = require("./message/router");
+const messageRouterFactory = require("./message/router");
 const stream = new Sse();
+const messageRouter = messageRouterFactory(stream);
 const Message = require("./message/model");
 
 //now that the stream is connected after putting in terminal http :4000/stream --stream it will send hi
@@ -32,7 +33,7 @@ app.get("/stream", async (request, response) => {
 //when users connect to the stream lets them see all msgs that were there
 const jsonParser = bodyParser.json();
 app.use(jsonParser);
-app.use(routerMessage);
+app.use(messageRouter);
 
 app.listen(port, () => {
   console.log(`listening on : ${port}`);
